@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PharmaCom GMP Suite</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #f5f2ed;
+  --bg2: #ede9e1;
+  --surface: #ffffff;
+  --surface2: #faf9f6;
+  --ink: #1a1612;
+  --ink2: #3d3730;
+  --ink3: #7a6f65;
+  --ink4: #b5aca0;
+  --gold: #c8821a;
+  --gold-light: #f0c56a;
+  --teal: #1a6b6b;
+  --teal-light: #e8f4f4;
+  --red: #c0392b;
+  --red-light: #fdf0ee;
+  --amber: #d4860a;
+  --amber-light: #fdf3e3;
+  --green: #1a7a4a;
+  --green-light: #e8f5ed;
+  --border: #ddd8cf;
+  --border2: #e8e3da;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grain texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* HEADER */
+header {
+  background: var(--ink);
+  color: #f5f2ed;
+  padding: 0 2.5rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-mark {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  position: relative;
+}
+
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.logo-text span { color: var(--gold-light); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.framework-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.framework-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a09488;
+}
+
+#global-framework {
+  background: #2a2420;
+  border: 1px solid #4a3f35;
+  color: #f5f2ed;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+#global-framework:focus { border-color: var(--gold); }
+
+.header-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  background: rgba(200,130,26,0.15);
+  color: var(--gold-light);
+  border: 1px solid rgba(200,130,26,0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* LAYOUT */
+.app-body {
+  display: flex;
+  min-height: calc(100vh - 64px);
+}
+
+/* SIDEBAR */
+aside {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.nav-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink4);
+  padding: 0 1.25rem;
+  margin: 0 0 0.5rem;
+}
+
+.nav-section { margin-bottom: 1.75rem; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  font-size: 0.87rem;
+  color: var(--ink3);
+  font-weight: 500;
+  user-select: none;
+}
+
+.nav-item:hover { background: var(--bg2); color: var(--ink); }
+.nav-item.active {
+  background: var(--teal-light);
+  color: var(--teal);
+  border-left-color: var(--teal);
+  font-weight: 600;
+}
+
+.nav-icon {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+
+.nav-item.active .nav-icon { background: rgba(26,107,107,0.12); }
+
+.nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.75rem 1.25rem 1.25rem;
+}
+
+/* MAIN */
+main {
+  flex: 1;
+  padding: 2.5rem;
+  max-width: 900px;
+  overflow-y: auto;
+}
+
+.page { display: none; }
+.page.active { display: block; animation: slideUp 0.25s ease; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* PAGE HEADER */
+.page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.page-desc {
+  color: var(--ink3);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* CARDS */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+/* FORM ELEMENTS */
+.field { margin-bottom: 1.1rem; }
+
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink2);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.01em;
+}
+
+select, input[type="text"], textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  resize: vertical;
+  -webkit-appearance: none;
+}
+
+select { cursor: pointer; }
+select:focus, input:focus, textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(26,107,107,0.08);
+  background: var(--surface);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.65rem 1.4rem;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.87rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: #f5f2ed;
+}
+.btn-primary:hover { background: var(--ink2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-gold {
+  background: var(--gold);
+  color: #fff;
+}
+.btn-gold:hover { background: #b5711a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(200,130,26,0.3); }
+.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--ink3);
+}
+.btn-outline:hover { border-color: var(--ink3); color: var(--ink); background: var(--bg2); }
+
+.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.8rem; }
+
+/* AI RESPONSE */
+.ai-box {
+  display: none;
+  margin-top: 1.25rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--teal);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ai-box.visible { display: block; animation: slideUp 0.3s ease; }
+
+.ai-box-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 1.25rem;
+  background: var(--teal-light);
+  border-bottom: 1px solid var(--border);
+}
+
+.ai-box-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 500;
+}
+
+.ai-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.ai-box-content {
+  padding: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: var(--ink2);
+  white-space: pre-wrap;
+}
+
+.ai-box-actions {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--border2);
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* LOADING */
+.loader {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--teal-light);
+  border-radius: 8px;
+  font-size: 0.83rem;
+  color: var(--teal);
+  font-weight: 500;
+}
+
+.loader.visible { display: flex; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(26,107,107,0.2);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* BADGES */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.badge-critical { background: var(--red-light); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+.badge-major { background: var(--amber-light); color: var(--amber); border: 1px solid rgba(212,134,10,0.2); }
+.badge-minor { background: var(--teal-light); color: var(--teal); border: 1px solid rgba(26,107,107,0.2); }
+.badge-ok { background: var(--green-light); color: var(--green); border: 1px solid rgba(26,122,74,0.2); }
+.badge-info { background: var(--bg2); color: var(--ink3); border: 1px solid var(--border); }
+
+/* ── WELCOME PAGE ── */
+.welcome-hero {
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  color: #f5f2ed;
+}
+
+.welcome-hero::before {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,130,26,0.15), transparent 70%);
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+
+.hero-title span { color: var(--gold-light); }
+
+.hero-desc {
+  color: #a09488;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat { }
+.stat-n {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--gold-light);
+}
+.stat-l {
+  font-size: 0.75rem;
+  color: #7a6f65;
+  margin-top: 2px;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+
+.tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--teal); }
+.tool-card:hover::after { transform: scaleX(1); }
+
+.tc-icon {
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.tc-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: var(--ink);
+}
+
+.tc-desc {
+  font-size: 0.78rem;
+  color: var(--ink3);
+  line-height: 1.5;
+}
+
+/* CHECKLIST */
+.checklist-container {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: none;
+  margin-top: 1rem;
+}
+
+.checklist-container.visible { display: block; animation: slideUp 0.3s ease; }
+
+.cl-header {
+  padding: 0.75rem 1.25rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cl-title-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.cl-progress {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--ink3);
+}
+
+.cl-items { padding: 0.5rem 0; }
+
+.cl-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0.65rem 1.25rem;
+  border-bottom: 1px solid var(--border2);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.cl-item:last-child { border-bottom: none; }
+.cl-item:hover { background: var(--surface); }
+.cl-item.checked { opacity: 0.5; }
+.cl-item.checked .cl-text { text-decoration: line-through; }
+
+.cl-checkbox {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  transition: all 0.15s;
+  font-size: 0.65rem;
+  color: white;
+}
+
+.cl-item.checked .cl-checkbox {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.cl-body { flex: 1; }
+.cl-text { font-size: 0.85rem; color: var(--ink2); line-height: 1.5; }
+.cl-meta { display: flex; gap: 6px; margin-top: 4px; }
+
+/* CHAT */
+.chat-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  background: var(--bg);
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 82%;
+}
+
+.msg.user { align-self: flex-end; align-items: flex-end; }
+.msg.ai { align-self: flex-start; }
+
+.msg-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-bottom: 4px;
+}
+
+.msg-bubble {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  font-size: 0.87rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.msg.user .msg-bubble {
+  background: var(--ink);
+  color: #f5f2ed;
+  border-bottom-right-radius: 3px;
+}
+
+.msg.ai .msg-bubble {
+  background: var(--surface);
+  color: var(--ink2);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 3px;
+  box-shadow: var(--shadow);
+}
+
+.chat-footer {
+  padding: 1rem;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.chat-input-row textarea {
+  flex: 1;
+  height: 44px;
+  resize: none;
+  padding: 0.6rem 0.9rem;
+}
+
+.quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.qp-btn {
+  font-size: 0.72rem;
+  padding: 0.3rem 0.7rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--ink3);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+
+.qp-btn:hover { background: var(--teal-light); color: var(--teal); border-color: var(--teal); }
+
+/* DEVIATION */
+.dev-timeline {
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 1rem;
+}
+
+.dev-timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-step {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -1.75rem;
+  top: 4px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--teal);
+  border: 2px solid var(--bg);
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  padding: 0.65rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink3);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  padding: 0.6rem 1rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  text-align: left;
+}
+td {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border2);
+  color: var(--ink2);
+  vertical-align: top;
+}
+tr:hover td { background: var(--bg); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
+
+/* COPY NOTICE */
+.copy-notice {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--ink);
+  color: #f5f2ed;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.25s;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.copy-notice.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  aside { display: none; }
+  .tool-grid { grid-template-columns: 1fr 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="copy-notice" id="copyNotice">✓ Copied to clipboard</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">⚗</div>
+    <div class="logo-text">Pharma<span>GMP</span> Suite</div>
+  </div>
+  <div class="header-right">
+    <div class="framework-select-wrap">
+      <span class="framework-label">Framework</span>
+      <select id="global-framework">
+        <option value="EU GMP (EMA Guidelines)">EU GMP — EMA</option>
+        <option value="EU GMP Annex 1 (2022) — Sterile Manufacturing">EU GMP Annex 1 (2022)</option>
+        <option value="EU GMP Annex 11 — Computerised Systems">EU GMP Annex 11</option>
+        <option value="FDA 21 CFR Parts 210 & 211">FDA 21 CFR 210/211</option>
+        <option value="FDA 21 CFR Part 11 — Electronic Records">FDA 21 CFR Part 11</option>
+        <option value="WHO GMP Guidelines">WHO GMP</option>
+        <option value="ICH Q10 — Pharmaceutical Quality System">ICH Q10</option>
+        <option value="ICH Q9 — Quality Risk Management">ICH Q9 (Risk Mgmt)</option>
+        <option value="ISO 13485:2016 — Medical Devices">ISO 13485 (Med. Devices)</option>
+        <option value="EU MDR 2017/745 — Medical Devices Regulation">EU MDR 2017/745</option>
+        <option value="PIC/S GMP Guide">PIC/S GMP</option>
+      </select>
+    </div>
+    <div class="header-pill">AI-POWERED</div>
+  </div>
+</header>
+
+<div class="app-body">
+  <aside>
+    <div class="nav-section">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" onclick="go('home')">
+        <div class="nav-icon">🏠</div> Dashboard
+      </div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">GMP Inspection</div>
+      <div class="nav-item" onclick="go('deficiency')">
+        <div class="nav-icon">🔍</div> Deficiency Classifier
+      </div>
+      <div class="nav-item" onclick="go('checklist')">
+        <div class="nav-icon">✅</div> Inspection Checklist
+      </div>
+      <div class="nav-item" onclick="go('deviation')">
+        <div class="nav-icon">⚠️</div> Deviation Investigator
+      </div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">Compliance Actions</div>
+      <div class="nav-item" onclick="go('capa')">
+        <div class="nav-icon">🛠️</div> CAPA Generator
+      </div>
+      <div class="nav-item" onclick="go('risk')">
+        <div class="nav-icon">📊</div> Risk Assessment
+      </div>
+      <div class="nav-item" onclick="go('sop')">
+        <div class="nav-icon">📄</div> SOP Reviewer
+      </div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">Regulatory</div>
+      <div class="nav-item" onclick="go('dossier')">
+        <div class="nav-icon">📋</div> Dossier Gap Analysis
+      </div>
+      <div class="nav-item" onclick="go('response')">
+        <div class="nav-icon">✉️</div> Authority Response
+      </div>
+      <div class="nav-item" onclick="go('training')">
+        <div class="nav-icon">🎓</div> Training Generator
+      </div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">AI Assistant</div>
+      <div class="nav-item" onclick="go('chat')">
+        <div class="nav-icon">💬</div> GMP Expert Chat
+      </div>
+      <div class="nav-item" onclick="go('summarize')">
+        <div class="nav-icon">📑</div> Document Summarizer
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ═══ HOME ═══ -->
+    <div class="page active" id="page-home">
+      <div class="welcome-hero">
+        <div class="hero-eyebrow">Pharmaceutical Regulatory Intelligence</div>
+        <div class="hero-title">GMP Compliance<br><span>Command Center</span></div>
+        <div class="hero-desc">AI-powered tools for GMP inspections, regulatory submissions, CAPA management, and compliance documentation — all frameworks supported.</div>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-n">11</div><div class="stat-l">Frameworks</div></div>
+          <div class="stat"><div class="stat-n">10</div><div class="stat-l">AI Tools</div></div>
+          <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Queries</div></div>
+        </div>
+      </div>
+      <div class="tool-grid">
+        <div class="tool-card" onclick="go('deficiency')"><span class="tc-icon">🔍</span><div class="tc-title">Deficiency Classifier</div><div class="tc-desc">Classify observations as Critical / Major / Minor with regulatory justification</div></div>
+        <div class="tool-card" onclick="go('checklist')"><span class="tc-icon">✅</span><div class="tc-title">Inspection Checklist</div><div class="tc-desc">Generate tailored GMP checklists for any facility area</div></div>
+        <div class="tool-card" onclick="go('capa')"><span class="tc-icon">🛠️</span><div class="tc-title">CAPA Generator</div><div class="tc-desc">Full corrective action plans with root cause analysis</div></div>
+        <div class="tool-card" onclick="go('deviation')"><span class="tc-icon">⚠️</span><div class="tc-title">Deviation Investigator</div><div class="tc-desc">Structured investigation reports for manufacturing deviations</div></div>
+        <div class="tool-card" onclick="go('risk')"><span class="tc-icon">📊</span><div class="tc-title">Risk Assessment</div><div class="tc-desc">ICH Q9-based FMEA and risk ranking matrices</div></div>
+        <div class="tool-card" onclick="go('sop')"><span class="tc-icon">📄</span><div class="tc-title">SOP Reviewer</div><div class="tc-desc">AI compliance review of SOPs with gap identification</div></div>
+        <div class="tool-card" onclick="go('dossier')"><span class="tc-icon">📋</span><div class="tc-title">Dossier Gap Analysis</div><div class="tc-desc">CTD, Technical File & submission completeness check</div></div>
+        <div class="tool-card" onclick="go('response')"><span class="tc-icon">✉️</span><div class="tc-title">Authority Response</div><div class="tc-desc">Draft professional responses to regulatory deficiency letters</div></div>
+        <div class="tool-card" onclick="go('training')"><span class="tc-icon">🎓</span><div class="tc-title">Training Generator</div><div class="tc-desc">Create GMP training materials and assessments for staff</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ DEFICIENCY CLASSIFIER ═══ -->
+    <div class="page" id="page-deficiency">
+      <div class="page-header">
+        <div class="page-eyebrow">GMP Inspection</div>
+        <div class="page-title">Deficiency Classifier</div>
+        <div class="page-desc">Describe an inspection observation and get an AI-powered classification with regulatory justification, risk assessment, and recommended immediate actions.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Observation Details</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Regulatory Framework</label>
+            <select id="def-fw">
+              <option>— Use Global Framework (header) —</option>
+              <option value="EU GMP (EMA)">EU GMP (EMA)</option>
+              <option value="EU GMP Annex 1 (2022) Sterile">EU GMP Annex 1 (2022)</option>
+              <option value="FDA 21 CFR Parts 210/211">FDA 21 CFR 210/211</option>
+              <option value="WHO GMP">WHO GMP</option>
+              <option value="ISO 13485">ISO 13485</option>
+              <option value="EU MDR 2017/745">EU MDR 2017/745</option>
+              <option value="PIC/S GMP">PIC/S GMP</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Facility / Area Type</label>
+            <select id="def-area">
+              <option>Sterile Manufacturing (Aseptic)</option>
+              <option>Sterile Manufacturing (Terminal)</option>
+              <option>Solid Dosage Forms</option>
+              <option>API / Active Substance Manufacturing</option>
+              <option>QC Laboratory</option>
+              <option>Warehouse & Cold Chain</option>
+              <option>Medical Device Manufacturing</option>
+              <option>Biological / Biosimilar</option>
+              <option>Clinical Trial Manufacturing</option>
+              <option>Contract Manufacturing</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Observation Description <span style="color:var(--ink4); font-weight:400;">(describe exactly what was seen)</span></label>
+          <textarea id="def-obs" rows="4" placeholder="e.g., During inspection of the filling line, it was observed that the environmental monitoring data for viable particles in Grade A zones was not reviewed or signed off by the QA department for the past 6 weeks. The logbook showed entries made by operators only with no QA countersignature as required by SOP QC-045."></textarea>
+        </div>
+        <div class="field">
+          <label>Any repeated occurrence? <span style="color:var(--ink4); font-weight:400;">(optional context)</span></label>
+          <input type="text" id="def-repeat" placeholder="e.g., Same finding observed at previous inspection 18 months ago — CAPA was closed">
+        </div>
+        <button class="btn btn-primary" onclick="runDeficiency()" id="def-btn">
+          🤖 Classify Observation
+        </button>
+        <div class="loader" id="def-loader"><div class="spinner"></div> Analyzing observation against regulatory requirements...</div>
+        <div class="ai-box" id="def-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">AI Classification Result</div></div>
+          <div class="ai-box-content" id="def-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('def-content')">📋 Copy</button>
+            <button class="btn btn-outline btn-sm" onclick="go('capa')">→ Generate CAPA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CHECKLIST ═══ -->
+    <div class="page" id="page-checklist">
+      <div class="page-header">
+        <div class="page-eyebrow">GMP Inspection</div>
+        <div class="page-title">Inspection Checklist</div>
+        <div class="page-desc">Generate a detailed, prioritized GMP inspection checklist for any facility area and regulatory framework. Track your progress in real time.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Checklist Configuration</div></div>
+        <div class="grid-3">
+          <div class="field">
+            <label>Framework</label>
+            <select id="chk-fw">
+              <option value="EU GMP Annex 1 (2022)">EU GMP Annex 1 (2022)</option>
+              <option value="EU GMP">EU GMP (General)</option>
+              <option value="FDA 21 CFR 211">FDA 21 CFR 211</option>
+              <option value="WHO GMP">WHO GMP</option>
+              <option value="ISO 13485">ISO 13485</option>
+              <option value="EU MDR">EU MDR</option>
+              <option value="PIC/S">PIC/S</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Area to Inspect</label>
+            <select id="chk-area">
+              <option value="cleanroom environmental monitoring and contamination control">Cleanroom & Env. Monitoring</option>
+              <option value="aseptic filling and gowning procedures">Aseptic Filling & Gowning</option>
+              <option value="QC laboratory (stability, testing, OOS)">QC Laboratory</option>
+              <option value="warehouse, storage and cold chain">Warehouse & Cold Chain</option>
+              <option value="production area and equipment qualification">Production & Equipment</option>
+              <option value="documentation, records management and data integrity">Documentation & Data Integrity</option>
+              <option value="water systems (WFI, purified water)">Water Systems (WFI/PW)</option>
+              <option value="HVAC and utilities">HVAC & Utilities</option>
+              <option value="change control and validation">Change Control & Validation</option>
+              <option value="supplier qualification and audits">Supplier Qualification</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Number of Items</label>
+            <select id="chk-count">
+              <option value="12">12 items (quick)</option>
+              <option value="20" selected>20 items (standard)</option>
+              <option value="30">30 items (comprehensive)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="runChecklist()" id="chk-btn">
+          🤖 Generate Checklist
+        </button>
+        <div class="loader" id="chk-loader"><div class="spinner"></div> Building inspection checklist...</div>
+        <div class="checklist-container" id="chk-container">
+          <div class="cl-header">
+            <div class="cl-title-label" id="chk-cl-title">Checklist</div>
+            <div class="cl-progress" id="chk-progress">0 / 0 completed</div>
+          </div>
+          <div class="cl-items" id="chk-items"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DEVIATION ═══ -->
+    <div class="page" id="page-deviation">
+      <div class="page-header">
+        <div class="page-eyebrow">GMP Inspection</div>
+        <div class="page-title">Deviation Investigator</div>
+        <div class="page-desc">Generate a structured, GMP-compliant deviation investigation report with root cause analysis, impact assessment, and disposition recommendation.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Deviation Information</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Deviation Type</label>
+            <select id="dev-type">
+              <option>Environmental monitoring excursion</option>
+              <option>Out-of-specification (OOS) result</option>
+              <option>Equipment failure / malfunction</option>
+              <option>Process deviation</option>
+              <option>Documentation error</option>
+              <option>Contamination incident</option>
+              <option>Cold chain / temperature excursion</option>
+              <option>Human error</option>
+              <option>Utility failure</option>
+              <option>Batch yield deviation</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Severity</label>
+            <select id="dev-sev">
+              <option value="Critical">Critical — Direct patient safety impact</option>
+              <option value="Major">Major — Significant quality impact</option>
+              <option value="Minor">Minor — Low quality impact</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Deviation Description</label>
+          <textarea id="dev-desc" rows="3" placeholder="Describe the deviation: what happened, when, where, which batch/equipment was involved..."></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Product / Batch Number <span style="color:var(--ink4); font-weight:400;">(optional)</span></label>
+            <input type="text" id="dev-batch" placeholder="e.g., Batch No. XY-20250301-A">
+          </div>
+          <div class="field">
+            <label>Immediate Actions Taken</label>
+            <input type="text" id="dev-immediate" placeholder="e.g., Batch quarantined, equipment shut down">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="runDeviation()" id="dev-btn">
+          🤖 Generate Investigation Report
+        </button>
+        <div class="loader" id="dev-loader"><div class="spinner"></div> Writing investigation report...</div>
+        <div class="ai-box" id="dev-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">Deviation Investigation Report</div></div>
+          <div class="ai-box-content" id="dev-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('dev-content')">📋 Copy Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CAPA ═══ -->
+    <div class="page" id="page-capa">
+      <div class="page-header">
+        <div class="page-eyebrow">Compliance Actions</div>
+        <div class="page-title">CAPA Generator</div>
+        <div class="page-desc">Generate a complete, authority-ready Corrective and Preventive Action plan with 5-Why root cause analysis, timelines, responsible parties, and effectiveness checks.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">CAPA Input</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Deficiency Classification</label>
+            <select id="capa-cls">
+              <option value="Critical">🔴 Critical</option>
+              <option value="Major">🟡 Major</option>
+              <option value="Minor">🔵 Minor</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Source of Finding</label>
+            <select id="capa-source">
+              <option>External regulatory inspection</option>
+              <option>Internal audit</option>
+              <option>Customer audit</option>
+              <option>OOS / deviation investigation</option>
+              <option>Change control review</option>
+              <option>Management review</option>
+              <option>Complaint investigation</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Deficiency / Finding Description</label>
+          <textarea id="capa-finding" rows="3" placeholder="Describe the deficiency or non-conformance in detail..."></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Department / System Involved</label>
+            <input type="text" id="capa-dept" placeholder="e.g., QC Laboratory, Production Line 3, Warehouse">
+          </div>
+          <div class="field">
+            <label>Proposed Timeline for Resolution</label>
+            <select id="capa-timeline">
+              <option value="30 days">30 days (Critical)</option>
+              <option value="60 days" selected>60 days (Major)</option>
+              <option value="90 days">90 days (Minor)</option>
+              <option value="6 months">6 months (Systemic)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Immediate / Containment Actions Already Taken <span style="color:var(--ink4); font-weight:400;">(optional)</span></label>
+          <textarea id="capa-immediate" rows="2" placeholder="e.g., Batch quarantined, equipment taken offline, affected staff retrained..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="runCAPA()" id="capa-btn">
+          🤖 Generate CAPA Plan
+        </button>
+        <div class="loader" id="capa-loader"><div class="spinner"></div> Building comprehensive CAPA plan...</div>
+        <div class="ai-box" id="capa-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">CAPA Plan — Ready for Authority Submission</div></div>
+          <div class="ai-box-content" id="capa-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('capa-content')">📋 Copy Plan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RISK ASSESSMENT ═══ -->
+    <div class="page" id="page-risk">
+      <div class="page-header">
+        <div class="page-eyebrow">Compliance Actions</div>
+        <div class="page-title">Risk Assessment</div>
+        <div class="page-desc">Generate an ICH Q9-based quality risk assessment with FMEA analysis, risk ranking, and mitigation recommendations.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Risk Assessment Input</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Risk Assessment Type</label>
+            <select id="risk-type">
+              <option value="FMEA (Failure Mode and Effects Analysis)">FMEA</option>
+              <option value="HACCP-based">HACCP</option>
+              <option value="Fault Tree Analysis (FTA)">Fault Tree Analysis</option>
+              <option value="Preliminary Hazard Analysis (PHA)">Preliminary Hazard Analysis</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Process / System to Assess</label>
+            <select id="risk-process">
+              <option>Aseptic filling process</option>
+              <option>Sterilization cycle</option>
+              <option>Environmental monitoring program</option>
+              <option>Water system (WFI / PW)</option>
+              <option>Change control process</option>
+              <option>Cleaning validation</option>
+              <option>Cold chain logistics</option>
+              <option>Computer system / CSV</option>
+              <option>Supplier qualification</option>
+              <option>Lyophilization</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Specific Concern or Context <span style="color:var(--ink4); font-weight:400;">(optional)</span></label>
+          <textarea id="risk-context" rows="2" placeholder="e.g., New equipment qualification, post-deviation risk re-evaluation, pre-inspection readiness..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="runRisk()" id="risk-btn">
+          🤖 Generate Risk Assessment
+        </button>
+        <div class="loader" id="risk-loader"><div class="spinner"></div> Performing risk analysis...</div>
+        <div class="ai-box" id="risk-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">Risk Assessment — ICH Q9 Based</div></div>
+          <div class="ai-box-content" id="risk-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('risk-content')">📋 Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SOP REVIEWER ═══ -->
+    <div class="page" id="page-sop">
+      <div class="page-header">
+        <div class="page-eyebrow">Compliance Actions</div>
+        <div class="page-title">SOP Reviewer</div>
+        <div class="page-desc">Paste your SOP content for a comprehensive AI review against GMP requirements. Get gap identification, improvement recommendations, and a compliance rating.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">SOP Review</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Applicable Regulation</label>
+            <select id="sop-reg">
+              <option value="EU GMP">EU GMP</option>
+              <option value="EU GMP Annex 1 (2022)">EU GMP Annex 1 (2022)</option>
+              <option value="FDA 21 CFR 211">FDA 21 CFR 211</option>
+              <option value="WHO GMP">WHO GMP</option>
+              <option value="ISO 13485">ISO 13485</option>
+              <option value="EU MDR">EU MDR</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>SOP Category</label>
+            <select id="sop-cat">
+              <option>Environmental monitoring</option>
+              <option>Aseptic technique / gowning</option>
+              <option>Cleaning and disinfection</option>
+              <option>Equipment qualification / calibration</option>
+              <option>Deviation handling</option>
+              <option>Change control</option>
+              <option>Batch release</option>
+              <option>Out-of-specification (OOS)</option>
+              <option>Data integrity</option>
+              <option>Sampling procedure</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>SOP Content <span style="color:var(--ink4); font-weight:400;">(paste full or partial SOP text)</span></label>
+          <textarea id="sop-text" rows="9" placeholder="Paste your SOP text here...
+
+Example:
+1. PURPOSE
+This SOP describes the procedure for...
+
+2. SCOPE
+This procedure applies to...
+
+3. RESPONSIBILITIES
+..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="runSOP()" id="sop-btn">
+          🤖 Review SOP
+        </button>
+        <div class="loader" id="sop-loader"><div class="spinner"></div> Reviewing SOP for GMP compliance...</div>
+        <div class="ai-box" id="sop-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">SOP Compliance Review</div></div>
+          <div class="ai-box-content" id="sop-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('sop-content')">📋 Copy Review</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DOSSIER GAP ═══ -->
+    <div class="page" id="page-dossier">
+      <div class="page-header">
+        <div class="page-eyebrow">Regulatory Submissions</div>
+        <div class="page-title">Dossier Gap Analysis</div>
+        <div class="page-desc">Identify missing sections and documents in your regulatory submission before filing. Covers CTD, Technical Files, 510(k), IMPD, and more.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Submission Details</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Submission Type</label>
+            <select id="dos-type">
+              <option value="CTD (Common Technical Document) — New Marketing Authorization Application (MAA)">CTD — New MAA</option>
+              <option value="CTD Type II Variation">CTD Type II Variation</option>
+              <option value="CTD Type IA/IB Variation">CTD Type IA/IB Variation</option>
+              <option value="EU MDR Technical File (Technical Documentation)">EU MDR Technical File</option>
+              <option value="FDA 510(k) Premarket Notification">FDA 510(k) Submission</option>
+              <option value="FDA PMA (Premarket Approval)">FDA PMA Application</option>
+              <option value="IMPD (Investigational Medicinal Product Dossier) for clinical trial">IMPD — Clinical Trial</option>
+              <option value="ASMF (Active Substance Master File)">ASMF / Drug Master File</option>
+              <option value="Pediatric Investigation Plan (PIP)">Pediatric Investigation Plan</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Product Type</label>
+            <select id="dos-product">
+              <option>Oral solid dosage (tablet / capsule)</option>
+              <option>Sterile injectable (small volume)</option>
+              <option>Sterile injectable (large volume)</option>
+              <option>Biological / biosimilar</option>
+              <option>Advanced therapy medicinal product (ATMP)</option>
+              <option>Topical / dermal</option>
+              <option>Inhalation product</option>
+              <option>Medical device Class I</option>
+              <option>Medical device Class IIa</option>
+              <option>Medical device Class IIb / III</option>
+              <option>Combination product (drug + device)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Documents / Sections Currently Available <span style="color:var(--ink4); font-weight:400;">(list what you have so far)</span></label>
+          <textarea id="dos-have" rows="4" placeholder="List what you currently have, e.g.:
+- Module 1: Administrative information, labeling draft
+- Module 3.2.S: Drug substance — synthesis, specifications, stability (6 months)
+- Module 3.2.P: Drug product — formulation, manufacturing process description
+- Non-clinical summary (Module 2.4)"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="runDossier()" id="dos-btn">
+          🤖 Run Gap Analysis
+        </button>
+        <div class="loader" id="dos-loader"><div class="spinner"></div> Analyzing submission completeness...</div>
+        <div class="ai-box" id="dos-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">Dossier Gap Analysis Report</div></div>
+          <div class="ai-box-content" id="dos-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('dos-content')">📋 Copy Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ AUTHORITY RESPONSE ═══ -->
+    <div class="page" id="page-response">
+      <div class="page-header">
+        <div class="page-eyebrow">Regulatory Communications</div>
+        <div class="page-title">Authority Response Drafter</div>
+        <div class="page-desc">Draft professional, regulatory-grade responses to inspection reports, deficiency letters, and questions from regulatory authorities.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Response Details</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Regulatory Authority</label>
+            <select id="resp-auth">
+              <option>EMA (European Medicines Agency)</option>
+              <option>National CA — EU (e.g., BfArM, MHRA, ANSM)</option>
+              <option>FDA (U.S. Food & Drug Administration)</option>
+              <option>WHO Prequalification</option>
+              <option>Health Canada</option>
+              <option>TGA (Australia)</option>
+              <option>Notified Body (Medical Devices)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Document Type to Respond To</label>
+            <select id="resp-type">
+              <option>GMP Inspection Report (BPCR)</option>
+              <option>Warning Letter</option>
+              <option>Deficiency List (Day 120/150 questions)</option>
+              <option>Grounds for Refusal (GfR)</option>
+              <option>FDA Form 483</option>
+              <option>CAP (Compliance Action Plan) request</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Deficiency / Finding to Respond To</label>
+          <textarea id="resp-finding" rows="3" placeholder="Paste the exact deficiency text from the regulatory authority's letter..."></textarea>
+        </div>
+        <div class="field">
+          <label>Your Company's Actions Taken / Planned</label>
+          <textarea id="resp-actions" rows="3" placeholder="Describe what your company has done or plans to do to address this finding..."></textarea>
+        </div>
+        <div class="field">
+          <label>Tone</label>
+          <select id="resp-tone">
+            <option value="formal and concise">Formal & Concise</option>
+            <option value="detailed and scientific">Detailed & Scientific</option>
+            <option value="defensive but professional">Professionally Disagree (Partial)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="runResponse()" id="resp-btn">
+          🤖 Draft Authority Response
+        </button>
+        <div class="loader" id="resp-loader"><div class="spinner"></div> Drafting regulatory response...</div>
+        <div class="ai-box" id="resp-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">Draft Response — Ready to Review</div></div>
+          <div class="ai-box-content" id="resp-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('resp-content')">📋 Copy Response</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TRAINING ═══ -->
+    <div class="page" id="page-training">
+      <div class="page-header">
+        <div class="page-eyebrow">Staff Development</div>
+        <div class="page-title">Training Generator</div>
+        <div class="page-desc">Generate GMP training materials, presentations, and knowledge assessments for your team — tailored to the topic, audience level, and regulatory framework.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Training Configuration</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Training Topic</label>
+            <select id="train-topic">
+              <option>Data integrity and ALCOA+ principles</option>
+              <option>Aseptic technique and gowning</option>
+              <option>GMP fundamentals for new staff</option>
+              <option>Contamination control strategy (Annex 1)</option>
+              <option>Deviation and CAPA management</option>
+              <option>Change control process</option>
+              <option>Environmental monitoring</option>
+              <option>Out-of-specification (OOS) handling</option>
+              <option>Cleanroom behavior</option>
+              <option>Documentation best practices</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Target Audience</label>
+            <select id="train-audience">
+              <option>New operators (no GMP experience)</option>
+              <option>Production staff (experienced)</option>
+              <option>QC analysts</option>
+              <option>QA officers</option>
+              <option>Supervisors / line managers</option>
+              <option>Senior management</option>
+              <option>Contractors / visitors</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Output Format</label>
+          <select id="train-format">
+            <option value="training outline with key learning points, scenarios, and a 10-question assessment">Training outline + 10-question quiz</option>
+            <option value="detailed training script suitable for a 30-minute session">Full training script (30-min session)</option>
+            <option value="quick reference card with key rules and dos/don'ts">Quick reference card / pocket guide</option>
+            <option value="case study with discussion questions">Case study with discussion questions</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="runTraining()" id="train-btn">
+          🤖 Generate Training Material
+        </button>
+        <div class="loader" id="train-loader"><div class="spinner"></div> Creating training content...</div>
+        <div class="ai-box" id="train-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">Training Material</div></div>
+          <div class="ai-box-content" id="train-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('train-content')">📋 Copy Material</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CHAT ═══ -->
+    <div class="page" id="page-chat">
+      <div class="page-header">
+        <div class="page-eyebrow">AI Assistant</div>
+        <div class="page-title">GMP Expert Chat</div>
+        <div class="page-desc">Ask any question about GMP, pharmaceutical regulations, inspection preparation, quality systems, or regulatory submissions. Full conversation memory — ask follow-ups freely.</div>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-history" id="chat-history">
+          <div class="msg ai">
+            <div class="msg-label">GMP Expert AI</div>
+            <div class="msg-bubble">Hello! I'm your GMP compliance advisor with expertise across EU GMP, FDA regulations, WHO guidelines, ICH Q-series, ISO 13485, and EU MDR.\n\nAsk me anything — inspection preparation, CAPA strategies, regulatory submissions, data integrity, contamination control, Annex 1 requirements, or any regulatory question. How can I help?</div>
+          </div>
+        </div>
+        <div class="chat-footer">
+          <div class="chat-input-row">
+            <textarea id="chat-input" placeholder="Ask a GMP or regulatory question... (Enter to send, Shift+Enter for new line)" onkeydown="chatKey(event)"></textarea>
+            <button class="btn btn-primary" onclick="sendChat()" id="chat-btn">Send</button>
+          </div>
+          <div class="quick-prompts">
+            <button class="qp-btn" onclick="qChat('What are the key changes in EU GMP Annex 1 2022 vs the previous version?')">Annex 1 changes</button>
+            <button class="qp-btn" onclick="qChat('What are the most common critical findings in FDA sterile manufacturing inspections?')">FDA critical findings</button>
+            <button class="qp-btn" onclick="qChat('Explain ALCOA+ data integrity principles with practical examples')">ALCOA+ explained</button>
+            <button class="qp-btn" onclick="qChat('What is a Contamination Control Strategy (CCS) and what must it contain?')">CCS requirements</button>
+            <button class="qp-btn" onclick="qChat('How should we handle an OOS result under 21 CFR 211.192?')">OOS handling</button>
+            <button class="qp-btn" onclick="qChat('What are the differences between ICH Q9 and ICH Q9(R1) on quality risk management?')">ICH Q9 R1</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SUMMARIZER ═══ -->
+    <div class="page" id="page-summarize">
+      <div class="page-header">
+        <div class="page-eyebrow">AI Assistant</div>
+        <div class="page-title">Document Summarizer</div>
+        <div class="page-desc">Paste any regulatory document, guideline, inspection report, or SOP and get a structured summary with key requirements, action items, and regulatory implications.</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Document Input</div></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Document Type</label>
+            <select id="sum-type">
+              <option>Regulatory guideline / guidance document</option>
+              <option>GMP inspection report</option>
+              <option>Standard Operating Procedure (SOP)</option>
+              <option>Validation report</option>
+              <option>Stability study report</option>
+              <option>Authority question / deficiency letter</option>
+              <option>Scientific publication / paper</option>
+              <option>Change control documentation</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Summary Focus</label>
+            <select id="sum-focus">
+              <option value="key requirements and obligations">Key requirements & obligations</option>
+              <option value="action items and deadlines">Action items & deadlines</option>
+              <option value="compliance gaps and risks">Compliance gaps & risks</option>
+              <option value="executive summary for management">Executive summary</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Document Content <span style="color:var(--ink4); font-weight:400;">(paste text — up to several pages)</span></label>
+          <textarea id="sum-text" rows="9" placeholder="Paste the full or partial content of the document here..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="runSummarize()" id="sum-btn">
+          🤖 Summarize Document
+        </button>
+        <div class="loader" id="sum-loader"><div class="spinner"></div> Analyzing document...</div>
+        <div class="ai-box" id="sum-result">
+          <div class="ai-box-header"><div class="ai-dot"></div><div class="ai-box-label">Document Summary</div></div>
+          <div class="ai-box-content" id="sum-content"></div>
+          <div class="ai-box-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyResult('sum-content')">📋 Copy Summary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API = "https://api.anthropic.com/v1/messages";
+const SYS = `You are a senior regulatory pharmacist and GMP compliance expert with 25+ years of experience. You have deep expertise in EU GMP (all Annexes), FDA 21 CFR Parts 210/211/11, WHO GMP, ICH Q-series guidelines (Q8-Q12), ISO 13485, EU MDR 2017/745, and PIC/S. 
+
+You provide precise, actionable, professionally structured responses. Use clear section headers. Be specific when citing regulatory clauses. Your output is used directly by regulatory professionals and must be authoritative, accurate, and practical.`;
+
+function fw() {
+  return document.getElementById('global-framework').value;
+}
+
+async function callAI(userMsg, system) {
+  const r = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: system || SYS,
+      messages: [{ role: 'user', content: userMsg }]
+    })
+  });
+  const d = await r.json();
+  return d.content?.map(c => c.text || '').join('') || 'No response received.';
+}
+
+function setLoad(id, state) {
+  document.getElementById(id + '-loader').classList.toggle('visible', state);
+  const btn = document.getElementById(id + '-btn');
+  if (btn) btn.disabled = state;
+}
+
+function showResult(id, text) {
+  document.getElementById(id + '-content').textContent = text;
+  document.getElementById(id + '-result').classList.add('visible');
+}
+
+// ── DEFICIENCY
+async function runDeficiency() {
+  const fw = document.getElementById('def-fw').value.includes('Global') ? fw() : document.getElementById('def-fw').value;
+  const area = document.getElementById('def-area').value;
+  const obs = document.getElementById('def-obs').value.trim();
+  const repeat = document.getElementById('def-repeat').value;
+  if (!obs) return alert('Please describe the observation.');
+  setLoad('def', true);
+  document.getElementById('def-result').classList.remove('visible');
+
+  const p = `Classify this GMP inspection observation. Framework: ${fw}. Facility: ${area}.
+
+OBSERVATION: ${obs}
+${repeat ? `RECURRENCE HISTORY: ${repeat}` : ''}
+
+Provide:
+1. CLASSIFICATION: [Critical / Major / Minor] — with clear regulatory basis
+2. REGULATORY REFERENCE: Specific clause(s) violated (e.g., EU GMP Chapter 9, Clause 4.23; 21 CFR 211.68(b))
+3. PATIENT / PRODUCT RISK: Direct impact on product quality, safety, or efficacy
+4. CLASSIFICATION JUSTIFICATION: Why this specific level applies (especially if recurrence affects severity)
+5. IMMEDIATE ACTIONS REQUIRED: What the site must do right away
+6. EXPECTED INSPECTOR FOLLOW-UP: What the inspector will likely ask or verify
+
+Be precise and professional — this response will be used in a regulatory context.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('def', r);
+  } catch(e) { showResult('def', 'Error: ' + e.message); }
+  setLoad('def', false);
+}
+
+// ── CHECKLIST
+let chkItems = [];
+
+async function runChecklist() {
+  const fw2 = document.getElementById('chk-fw').value;
+  const area = document.getElementById('chk-area').value;
+  const count = document.getElementById('chk-count').value;
+  setLoad('chk', true);
+  document.getElementById('chk-container').classList.remove('visible');
+
+  const p = `Generate a GMP inspection checklist for "${area}" under ${fw2}. Return EXACTLY ${count} items as a JSON array.
+
+Each object must have:
+- "text": specific, verifiable inspection question (1-2 sentences)  
+- "category": 2-3 word category label
+- "priority": "critical", "major", or "minor"
+- "ref": regulatory reference (short, e.g. "Annex 1 §4.3")
+
+Return ONLY the raw JSON array. No markdown, no explanation, no backticks.`;
+
+  try {
+    const r = await callAI(p);
+    chkItems = JSON.parse(r.trim());
+    renderChecklist(fw2, area);
+  } catch(e) {
+    alert('Failed to generate checklist. Try again.');
+  }
+  setLoad('chk', false);
+}
+
+let chkChecked = new Set();
+
+function renderChecklist(fw2, area) {
+  chkChecked = new Set();
+  const container = document.getElementById('chk-items');
+  container.innerHTML = '';
+  document.getElementById('chk-cl-title').textContent = `${fw2} — ${area}`;
+  updateChkProgress();
+
+  chkItems.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'cl-item';
+    div.id = `cl-${i}`;
+    div.onclick = () => toggleCl(i);
+    const bClass = item.priority === 'critical' ? 'badge-critical' : item.priority === 'major' ? 'badge-major' : 'badge-minor';
+    div.innerHTML = `
+      <div class="cl-checkbox" id="cb-${i}"></div>
+      <div class="cl-body">
+        <div class="cl-text">${item.text}</div>
+        <div class="cl-meta">
+          <span class="badge ${bClass}">${item.priority}</span>
+          <span class="badge badge-info">${item.category}</span>
+          ${item.ref ? `<span style="font-size:0.7rem;color:var(--ink4);font-family:'DM Mono',monospace;">${item.ref}</span>` : ''}
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+
+  document.getElementById('chk-container').classList.add('visible');
+}
+
+function toggleCl(i) {
+  if (chkChecked.has(i)) chkChecked.delete(i);
+  else chkChecked.add(i);
+  document.getElementById(`cl-${i}`).classList.toggle('checked', chkChecked.has(i));
+  document.getElementById(`cb-${i}`).textContent = chkChecked.has(i) ? '✓' : '';
+  updateChkProgress();
+}
+
+function updateChkProgress() {
+  document.getElementById('chk-progress').textContent = `${chkChecked.size} / ${chkItems.length} completed`;
+}
+
+// ── DEVIATION
+async function runDeviation() {
+  const type = document.getElementById('dev-type').value;
+  const sev = document.getElementById('dev-sev').value;
+  const desc = document.getElementById('dev-desc').value.trim();
+  const batch = document.getElementById('dev-batch').value;
+  const immediate = document.getElementById('dev-immediate').value;
+  if (!desc) return alert('Please describe the deviation.');
+  setLoad('dev', true);
+  document.getElementById('dev-result').classList.remove('visible');
+
+  const p = `Write a structured GMP deviation investigation report. Framework: ${fw()}.
+
+TYPE: ${type}
+SEVERITY: ${sev}
+DESCRIPTION: ${desc}
+${batch ? `BATCH/PRODUCT: ${batch}` : ''}
+${immediate ? `IMMEDIATE ACTIONS TAKEN: ${immediate}` : ''}
+
+Structure the report with these sections:
+1. DEVIATION SUMMARY — date, type, severity, description
+2. IMMEDIATE IMPACT ASSESSMENT — batch/product affected, patient risk
+3. ROOT CAUSE ANALYSIS — 5-Why analysis leading to probable root cause
+4. CONTRIBUTING FACTORS — secondary causes
+5. REGULATORY ASSESSMENT — does this require authority notification? (specify thresholds)
+6. BATCH DISPOSITION RECOMMENDATION — release / reject / additional testing
+7. CAPA ACTIONS REQUIRED — corrective and preventive measures
+8. VERIFICATION AND CLOSURE — how to confirm effectiveness
+
+Write in professional regulatory language suitable for submission.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('dev', r);
+  } catch(e) { showResult('dev', 'Error: ' + e.message); }
+  setLoad('dev', false);
+}
+
+// ── CAPA
+async function runCAPA() {
+  const cls = document.getElementById('capa-cls').value;
+  const source = document.getElementById('capa-source').value;
+  const finding = document.getElementById('capa-finding').value.trim();
+  const dept = document.getElementById('capa-dept').value;
+  const timeline = document.getElementById('capa-timeline').value;
+  const immediate = document.getElementById('capa-immediate').value;
+  if (!finding) return alert('Please describe the finding.');
+  setLoad('capa', true);
+  document.getElementById('capa-result').classList.remove('visible');
+
+  const p = `Generate a complete, authority-ready CAPA plan for this ${cls} GMP finding. Framework: ${fw()}.
+
+SOURCE: ${source}
+DEPARTMENT: ${dept || 'Not specified'}
+FINDING: ${finding}
+RESOLUTION TIMELINE: ${timeline}
+${immediate ? `IMMEDIATE ACTIONS ALREADY TAKEN: ${immediate}` : ''}
+
+Produce a comprehensive CAPA plan:
+1. DESCRIPTION OF FINDING — standardized regulatory language
+2. ROOT CAUSE ANALYSIS — 5-Why methodology, identify the true systemic root cause
+3. IMMEDIATE / CONTAINMENT ACTIONS — what is done right now
+4. CORRECTIVE ACTIONS — specific actions with: responsible party (role), due date, evidence of completion
+5. PREVENTIVE ACTIONS — systemic improvements to prevent recurrence across the site
+6. TRAINING REQUIREMENTS — staff training arising from this CAPA
+7. CHANGE DOCUMENTATION — SOPs, records, or systems requiring update
+8. EFFECTIVENESS VERIFICATION — KPIs and checkpoints to confirm the CAPA worked (include timeframes)
+9. ESCALATION CRITERIA — conditions under which this CAPA would be re-opened
+
+Format professionally for regulatory authority submission.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('capa', r);
+  } catch(e) { showResult('capa', 'Error: ' + e.message); }
+  setLoad('capa', false);
+}
+
+// ── RISK
+async function runRisk() {
+  const type2 = document.getElementById('risk-type').value;
+  const proc = document.getElementById('risk-process').value;
+  const ctx = document.getElementById('risk-context').value;
+  setLoad('risk', true);
+  document.getElementById('risk-result').classList.remove('visible');
+
+  const p = `Perform an ${type2} quality risk assessment for "${proc}" under ${fw()} using ICH Q9(R1) methodology.
+${ctx ? `Context: ${ctx}` : ''}
+
+Provide:
+1. SCOPE AND OBJECTIVE — what is being assessed and why
+2. RISK IDENTIFICATION — list the 6-8 most significant failure modes / hazards
+3. RISK ANALYSIS TABLE — for each risk:
+   - Failure mode
+   - Potential effect
+   - Severity (1-10)
+   - Occurrence probability (1-10)  
+   - Detectability (1-10)
+   - RPN (Risk Priority Number = S×O×D)
+   - Risk level (High / Medium / Low)
+4. RISK EVALUATION — which risks exceed acceptable threshold
+5. RISK CONTROL / MITIGATION — specific controls for High and Medium risks
+6. RESIDUAL RISK ASSESSMENT — post-mitigation risk levels
+7. RISK REVIEW FREQUENCY — recommended periodic review intervals
+8. CONCLUSIONS AND RECOMMENDATIONS
+
+Reference ICH Q9(R1) principles throughout.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('risk', r);
+  } catch(e) { showResult('risk', 'Error: ' + e.message); }
+  setLoad('risk', false);
+}
+
+// ── SOP
+async function runSOP() {
+  const reg = document.getElementById('sop-reg').value;
+  const cat = document.getElementById('sop-cat').value;
+  const text = document.getElementById('sop-text').value.trim();
+  if (!text) return alert('Please paste the SOP content.');
+  setLoad('sop', true);
+  document.getElementById('sop-result').classList.remove('visible');
+
+  const p = `Review this ${cat} SOP for GMP compliance under ${reg}.
+
+--- SOP CONTENT ---
+${text.substring(0, 4000)}
+--- END ---
+
+Provide a structured compliance review:
+1. COMPLIANCE SUMMARY — overall assessment in 2-3 sentences
+2. OVERALL RATING — Compliant / Partially Compliant / Non-Compliant, with percentage estimate
+3. MANDATORY ELEMENTS CHECK — are all required GMP elements present? (purpose, scope, responsibilities, procedure, references, definitions, appendices, version control, approval signatures)
+4. CRITICAL GAPS — issues likely to generate inspection findings (list with specific regulatory references)
+5. MAJOR GAPS — significant deficiencies requiring correction
+6. MINOR IMPROVEMENTS — optional enhancements
+7. SPECIFIC RECOMMENDATIONS — actionable revisions (quote the problematic section and suggest exact replacement text where possible)
+8. POSITIVE ASPECTS — what the SOP does well
+
+Be specific. Reference exact regulatory clauses.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('sop', r);
+  } catch(e) { showResult('sop', 'Error: ' + e.message); }
+  setLoad('sop', false);
+}
+
+// ── DOSSIER
+async function runDossier() {
+  const type3 = document.getElementById('dos-type').value;
+  const prod = document.getElementById('dos-product').value;
+  const have = document.getElementById('dos-have').value;
+  setLoad('dos', true);
+  document.getElementById('dos-result').classList.remove('visible');
+
+  const p = `Perform a dossier gap analysis for a ${type3} for a ${prod}.
+
+DOCUMENTS/SECTIONS CURRENTLY AVAILABLE:
+${have || 'None specified — provide a complete required list.'}
+
+Provide:
+1. SUBMISSION OVERVIEW — regulatory pathway and key requirements
+2. COMPLETE REQUIRED SECTIONS — full list of all mandatory modules/documents for this submission type (reference current guidelines)
+3. DOCUMENTS CONFIRMED PRESENT — based on what was described
+4. CRITICAL GAPS — missing documents that will block acceptance or trigger Day 0 clock stop
+5. MAJOR GAPS — important missing sections
+6. OPTIONAL / RECOMMENDED — additional documents that strengthen the dossier
+7. SUBMISSION READINESS SCORE — estimated completeness (%)
+8. PRIORITY ACTION PLAN — ranked list of what to prepare first
+9. ESTIMATED TIMELINE — realistic timeline to complete the dossier
+
+Reference specific ICH guidelines, EU regulations, or FDA guidance documents.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('dos', r);
+  } catch(e) { showResult('dos', 'Error: ' + e.message); }
+  setLoad('dos', false);
+}
+
+// ── AUTHORITY RESPONSE
+async function runResponse() {
+  const auth = document.getElementById('resp-auth').value;
+  const type4 = document.getElementById('resp-type').value;
+  const finding = document.getElementById('resp-finding').value.trim();
+  const actions = document.getElementById('resp-actions').value.trim();
+  const tone = document.getElementById('resp-tone').value;
+  if (!finding) return alert('Please paste the regulatory finding.');
+  setLoad('resp', true);
+  document.getElementById('resp-result').classList.remove('visible');
+
+  const p = `Draft a ${tone} response to this GMP finding from ${auth}. Document type: ${type4}. Framework: ${fw()}.
+
+REGULATORY FINDING / DEFICIENCY:
+${finding}
+
+COMPANY ACTIONS TAKEN / PLANNED:
+${actions || 'Not provided — propose appropriate actions.'}
+
+Draft a professional regulatory response that:
+1. Opens with a formal acknowledgment of the finding
+2. Provides a clear, factual assessment of the issue
+3. Describes root cause investigation results (or proposes to conduct one)
+4. Details all corrective actions with specific timelines and responsible roles
+5. Describes preventive measures for systemic improvement
+6. Includes evidence of completion or planned verification activities
+7. Closes with a commitment statement
+
+Use language appropriate for submission to ${auth}. Number the sections clearly. This letter will be signed by the Qualified Person or regulatory affairs director.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('resp', r);
+  } catch(e) { showResult('resp', 'Error: ' + e.message); }
+  setLoad('resp', false);
+}
+
+// ── TRAINING
+async function runTraining() {
+  const topic = document.getElementById('train-topic').value;
+  const audience = document.getElementById('train-audience').value;
+  const format = document.getElementById('train-format').value;
+  setLoad('train', true);
+  document.getElementById('train-result').classList.remove('visible');
+
+  const p = `Create GMP training content. Framework: ${fw()}.
+
+TOPIC: ${topic}
+AUDIENCE: ${audience}
+FORMAT: ${format}
+
+Generate high-quality training material that:
+- Is accurate and up-to-date with current GMP requirements
+- Uses language appropriate for the target audience
+- Includes real-world examples relevant to pharmaceutical/medical device settings
+- References specific regulatory requirements
+- Is immediately usable without modification
+
+For any quiz/assessment questions: include 4 options (A-D) and the correct answer with explanation.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('train', r);
+  } catch(e) { showResult('train', 'Error: ' + e.message); }
+  setLoad('train', false);
+}
+
+// ── SUMMARIZER
+async function runSummarize() {
+  const type5 = document.getElementById('sum-type').value;
+  const focus = document.getElementById('sum-focus').value;
+  const text = document.getElementById('sum-text').value.trim();
+  if (!text) return alert('Please paste the document content.');
+  setLoad('sum', true);
+  document.getElementById('sum-result').classList.remove('visible');
+
+  const p = `Summarize this ${type5}. Focus on: ${focus}. Framework context: ${fw()}.
+
+--- DOCUMENT ---
+${text.substring(0, 5000)}
+--- END ---
+
+Provide a structured summary:
+1. DOCUMENT OVERVIEW — type, source, and purpose (2-3 sentences)
+2. KEY POINTS — the most important content, organized by topic
+3. ${focus.toUpperCase()} — detailed focus on the requested aspect
+4. REGULATORY IMPLICATIONS — what this means for compliance teams
+5. RECOMMENDED ACTIONS — what a GMP team should do in response to this document
+
+Be concise but thorough. Use bullet points where appropriate.`;
+
+  try {
+    const r = await callAI(p);
+    showResult('sum', r);
+  } catch(e) { showResult('sum', 'Error: ' + e.message); }
+  setLoad('sum', false);
+}
+
+// ── CHAT
+const chatMsgs = [{ role: 'assistant', content: 'Hello! I\'m your GMP compliance advisor with expertise across EU GMP, FDA regulations, WHO guidelines, ICH Q-series, ISO 13485, and EU MDR.\n\nAsk me anything — inspection preparation, CAPA strategies, regulatory submissions, data integrity, contamination control, Annex 1 requirements, or any regulatory question. How can I help?' }];
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  input.style.height = '44px';
+  await processChat(msg);
+}
+
+async function qChat(msg) {
+  document.getElementById('chat-input').value = msg;
+  await sendChat();
+}
+
+function chatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+async function processChat(msg) {
+  const history = document.getElementById('chat-history');
+  const btn = document.getElementById('chat-btn');
+  btn.disabled = true;
+
+  addMsg('user', 'You', msg);
+  chatMsgs.push({ role: 'user', content: msg });
+
+  const thinkId = 'think-' + Date.now();
+  const thinkEl = document.createElement('div');
+  thinkEl.className = 'msg ai'; thinkEl.id = thinkId;
+  thinkEl.innerHTML = `<div class="msg-label">GMP Expert AI</div><div class="msg-bubble"><div class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></div>Analyzing...</div>`;
+  history.appendChild(thinkEl);
+  history.scrollTop = 9999;
+
+  try {
+    const response = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYS + `\n\nCurrent regulatory framework context: ${fw()}`,
+        messages: chatMsgs.slice(-20)
+      })
+    });
+    const d = await response.json();
+    const reply = d.content?.map(c => c.text || '').join('') || 'No response.';
+    chatMsgs.push({ role: 'assistant', content: reply });
+    thinkEl.innerHTML = `<div class="msg-label">GMP Expert AI</div><div class="msg-bubble">${reply}</div>`;
+  } catch(e) {
+    thinkEl.innerHTML = `<div class="msg-label">Error</div><div class="msg-bubble">Connection failed. Please try again.</div>`;
+  }
+
+  history.scrollTop = 9999;
+  btn.disabled = false;
+}
+
+function addMsg(role, label, text) {
+  const history = document.getElementById('chat-history');
+  const el = document.createElement('div');
+  el.className = `msg ${role}`;
+  el.innerHTML = `<div class="msg-label">${label}</div><div class="msg-bubble">${text}</div>`;
+  history.appendChild(el);
+  history.scrollTop = 9999;
+}
+
+// ── NAVIGATION
+function go(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick')?.includes(`'${id}'`)) n.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+// ── COPY
+function copyResult(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const notice = document.getElementById('copyNotice');
+    notice.classList.add('show');
+    setTimeout(() => notice.classList.remove('show'), 2000);
+  });
+}
+</script>
+</body>
+</html>
